@@ -29,7 +29,9 @@ char *readword (FILE *f){
     if ((n==0)&&(ch!=EOF)&&(ispunct(ch))) word[n]=ch;
     //else ungetc(ch,f);
     word[n+1]='\0';//in hope of luck
+    
     return word;
+    free(word);
 }
 
 void treedel(struct tree *t){
@@ -68,7 +70,7 @@ void treeFound(struct tree* t, int m, int a, FILE* f){
 
 void printtree (struct tree *t,int temp, FILE *f){
     int max = maxn(t);
-    int count = trcnt(t);
+    //int count = trcnt(t);
     
     for (int i = max; i > 0; i--){
         treeFound(t, i, temp, f); 
@@ -102,13 +104,16 @@ int main(int argc,char *argv[]){
     f2=stdout;
     if (argc>2){
         if (!strcmp(argv[1],"-i")) f1 = fopen(argv[2],"r");
-        if (!strcmp(argv[1],"-o")) f2 = fopen(argv[2],"r");
+        if (!strcmp(argv[1],"-o")) f2 = fopen(argv[2],"w");
     }
-    if (argc>4) if (!strcmp(argv[3],"-o")) f2 = fopen(argv[4],"r");
+    if (argc>4) if (!strcmp(argv[3],"-o")) f2 = fopen(argv[4],"w");
     while (!feof(f1)){
         w = readword(f1);
         if (w[0] != '\0') t = addtotree(t,w);
     }
+    free(w);
     printtree(t,trcnt (t),f2);
     treedel(t);
+    fclose(f1);
+    fclose(f2);
 }
