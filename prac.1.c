@@ -15,7 +15,6 @@ char *readword (FILE *f){
     int size,n=0;
     int ch;
     char *word = malloc(2*sizeof(char));
-
     while (isspace(ch = getc(f)) || (iscntrl(ch)));
     while (isalnum(ch)){
         if (size <= n){
@@ -29,7 +28,7 @@ char *readword (FILE *f){
     if ((n==0)&&(ch!=EOF)&&(ispunct(ch))) word[n]=ch;
     //else ungetc(ch,f);
     word[n+1]='\0';//in hope of luck
-    
+
     return word;
     free(word);
 }
@@ -82,21 +81,24 @@ struct tree *addtotree (struct tree *t,char *s){
     if (t == NULL) {
         t = (struct tree *) malloc(sizeof(struct tree));
         t->str=s;
+        free(s);
         t->cnt=1;
         t->l = t->r = NULL;
     }
     else {
-            temp = strcmp(t->str, s);
-            if ((temp) == 0) (t->cnt)++;
-            if (temp < 0) t->r = addtotree(t->r ,s);
-            if (temp > 0) t->l = addtotree(t->l ,s);
+        temp = strcmp(t->str, s);
+        if (temp == 0) (t->cnt)++;
+        if (temp < 0) t->r = addtotree((t->r) ,s);//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        if (temp > 0) t->l = addtotree((t->l) ,s);//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        free(s);
     }
+    
     return t;
 }
 
 int main(int argc,char *argv[]){
     struct tree *t=NULL;
-    char *w;
+    char *w=malloc(0);
     FILE *f1;
     FILE *f2;
 
