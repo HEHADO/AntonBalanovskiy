@@ -51,7 +51,7 @@ int maxn (struct tree *t){
     if (t == NULL) return 0;
     else return max(max(maxn(t->l),maxn(t->r)),t->cnt);
 }
-
+  
 int trcnt (struct tree *t){
     if (t!=NULL) return (t->cnt + trcnt(t->l) + trcnt(t->r));
     else return 0;
@@ -88,8 +88,8 @@ struct tree *addtotree (struct tree *t,char *s){
     else {
         temp = strcmp(t->str, s);
         if (temp == 0) (t->cnt)++;
-        if (temp < 0) t->r = addtotree((t->r) ,s);//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        if (temp > 0) t->l = addtotree((t->l) ,s);//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        if (temp < 0) t->r = addtotree((t->r) ,s);
+        if (temp > 0) t->l = addtotree((t->l) ,s);
         free(s);
     }
     
@@ -101,7 +101,6 @@ int main(int argc,char *argv[]){
     char *w=malloc(0);
     FILE *f1;
     FILE *f2;
-
     f1=stdin;
     f2=stdout;
     if (argc>2){
@@ -112,8 +111,8 @@ int main(int argc,char *argv[]){
     while (!feof(f1)){
         w = readword(f1);
         if (w[0] != '\0') t = addtotree(t,w);
+        free(w);
     }
-    free(w);
     printtree(t,trcnt (t),f2);
     treedel(t);
     fclose(f1);
