@@ -30,7 +30,7 @@ char *readword (FILE *f){
     word[n+1]='\0';//in hope of luck
 
     return word;
-    free(word);
+    //free(word);
 }
 
 void treedel(struct tree *t){
@@ -81,16 +81,18 @@ struct tree *addtotree (struct tree *t,char *s){
     if (t == NULL) {
         t = (struct tree *) malloc(sizeof(struct tree));
         t->str=s;
-        free(s);
+        //free(s);
         t->cnt=1;
         t->l = t->r = NULL;
     }
     else {
         temp = strcmp(t->str, s);
-        if (temp == 0) (t->cnt)++;
+        if (temp == 0) {
+            (t->cnt)++;
+            free(s);
+        }
         if (temp < 0) t->r = addtotree((t->r) ,s);
         if (temp > 0) t->l = addtotree((t->l) ,s);
-        free(s);
     }
     
     return t;
@@ -98,7 +100,7 @@ struct tree *addtotree (struct tree *t,char *s){
 
 int main(int argc,char *argv[]){
     struct tree *t=NULL;
-    char *w=malloc(0);
+    char *w=NULL;
     FILE *f1;
     FILE *f2;
     f1=stdin;
@@ -111,7 +113,7 @@ int main(int argc,char *argv[]){
     while (!feof(f1)){
         w = readword(f1);
         if (w[0] != '\0') t = addtotree(t,w);
-        free(w);
+        else free(w);
     }
     printtree(t,trcnt (t),f2);
     treedel(t);
