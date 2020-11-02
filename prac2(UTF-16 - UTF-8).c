@@ -31,30 +31,30 @@ void BIGEND(FILE* f1,FILE* f2, unsigned short u16){
     //unsigned short t;
     int p = 1;
     while ((p != EOF)&&(p > 0)&&(u16 != EOF)){
-        fprintf(stderr,"BIGEND\t");
+        //fprintf(stderr,"BIGEND\t");
         u16 = reverse (u16);
-        fprintf(stderr,"%x\t",u16);
+        //fprintf(stderr,"%x\t",u16);
         if (u16 <= 0x7f){
-                                        fprintf(stderr,"!\t");
+                                        //fprintf(stderr,"!\t");
             u8 = u16;
             fprintf(f2,"%c",u8);            
         } else if (u16 <= 0x7ff){
-                                          fprintf(stderr,"!!\t");
+                                        //fprintf(stderr,"!!\t");
             u8 = split(u16,6,11);
             u8 = u8|0xC0;
             fprintf(f2,"%c",u8);
             u8 = split(u16,0,6);
             u8 = u8|0x80;
             fprintf(f2,"%c",u8);
-        } else if (u16 <= 0xFFFF){      fprintf(stderr,"!!!\t");
+        } else if (u16 <= 0xFFFF){      //fprintf(stderr,"!!!\t");
             u8 = split(u16,12,16);
-            u8 = u8|0xE0;               fprintf(stderr,"%x\t",u8);
+            u8 = u8|0xE0;               //fprintf(stderr,"%x\t",u8);
             fprintf(f2,"%c",u8);
             u8 = split(u16,6,12);
-            u8 = u8|0x80;               fprintf(stderr,"%x\t",u8);
+            u8 = u8|0x80;               //fprintf(stderr,"%x\t",u8);
             fprintf(f2,"%c",u8);
             u8 = split(u16,0,6);
-            u8 = u8|0x80;               fprintf(stderr,"%x\t",u8);
+            u8 = u8|0x80;               //fprintf(stderr,"%x\t",u8);
             fprintf(f2,"%c",u8);
         }
         p = fread(&u16,sizeof u16,1,f1);
@@ -66,7 +66,7 @@ void LITTLEEND(FILE* f1,FILE* f2, unsigned short u16){
     int p = 1;
     unsigned char u8;
     while ((p != EOF)&&(p > 0)&&(u16 != EOF)){
-        fprintf(stderr,"LiTTLEEND\t");
+        //fprintf(stderr,"LiTTLEEND\t");
         //u16 = reverse (u16);
         if (u16 <= 0x7f){
             u8 = u16;
