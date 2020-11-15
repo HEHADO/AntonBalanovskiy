@@ -116,12 +116,12 @@ void myfree(char** v){
         free (v[i]);
         i++;
     }
-    //free (v);
+    free (v);
 }
 
 
 int main(){
-    char* ch1 = NULL;
+    //char* ch1 = NULL;
     char* ch = NULL;
     char buff[PATH_MAX];
     int argc = 0;
@@ -158,6 +158,10 @@ int main(){
             i++;
         }
         runcommand(argv);
+        myfree(argv);
+        free(ch);
+
+
         //myfree(argv);
         /*
         if (pipe(fd)<0){
