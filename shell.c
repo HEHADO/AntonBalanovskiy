@@ -92,7 +92,7 @@ char** createargv(int n,char* ch){
             argv = realloc(argv,size);
         }
         //printf("%s\n",ch);
-        argv[i] = strdup(ch);
+        argv[i] = strdup(ch);//?????????????????????????????????????????
         free(ch);
         ch = readword(stdin, &n);
         i++;
@@ -100,6 +100,7 @@ char** createargv(int n,char* ch){
     }
     argv[i] = strdup(ch);
     argv[i+1] = NULL;
+    free(ch);
     return argv;
 }
 
@@ -196,5 +197,7 @@ int main(){
             close(fd[0]);
             close(fd[1]);
         }*/
-    }    
+    
+    }
+    exitwitheof();
 }
