@@ -82,7 +82,7 @@ int size (char* ch){
 */
 
 char** createargv(int n,char* ch){
-    int size=1;
+    int size=2;
     int i=0;
     char** argv = malloc(2*sizeof(char*));
     //printf("%s\n",ch);
@@ -140,10 +140,11 @@ int main(){
     for(;;){    l:
         printf("%s%s > %s",GREEN,getcwd(buff,PATH_MAX),YELLOW);
         ch = readword(stdin,&n);
-        //printf("%s",BLACK);
+        printf("%s",BLACK);
                                             //printf("%s\t%d\n",ch,n);
         if (!strcmp(ch,C1)) {
             free(ch);
+
             exit (0);
         }
         
@@ -163,7 +164,7 @@ int main(){
             printf("%s\n",argv[i]);
             i++;
         }
-        runcommand(argv);
+        runcommand (argv);
         myfree(argv);
 
         //free(ch);
