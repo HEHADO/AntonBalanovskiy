@@ -11,10 +11,18 @@
 #define BLACK "\033[0m"
 #define RED "\033[1;31m"
 #define YELLOW "\033[1;33m"
+#define BLUE "\033[1;34m"
 #define WHITE "\033[1;37m"
 #define GREEN "\033[1;32m"
 #define C1 "exit"
 #define C2 "cd"
+
+
+
+void exitwitheof(){
+    printf("%sExit\n%s",BLUE,BLACK);
+    exit (0);
+}
 
 
 char *readword (FILE *f,int* t){
@@ -25,6 +33,7 @@ char *readword (FILE *f,int* t){
     char* word = NULL;
     word = malloc(0*sizeof(char));
     while (isspace(ch = getc(f)) );
+    if (ch==EOF) exitwitheof();
     while ((!isspace(ch))||(quotesisopen != 0)||(ch == '"')){
         if (size <= n){
             size = 2*size + 5;
@@ -40,6 +49,7 @@ char *readword (FILE *f,int* t){
             //printf("%d\n",n);
         }
         ch = getc(f);
+        if (ch==EOF) exitwitheof();
         if (ch == '\n'){
             *t = 1;
             goto m;
@@ -56,8 +66,7 @@ char *readword (FILE *f,int* t){
         size = 2*size +10;
         word = realloc(word,size);
     }
-    word[n+1]='\0';
-    word[n+2]='\0';
+    word[n]='\0';
     return word;
 }
 /*
@@ -109,7 +118,6 @@ void runcommand(char** arg){
 }
 
 
-
 void myfree(char** v){
     int i=0;
     while (v[i] != NULL){
@@ -124,12 +132,10 @@ int main(){
     //char* ch1 = NULL;
     char* ch = NULL;
     char buff[PATH_MAX];
-    int argc = 0;
     int n = 0;
-    int size=1;
     char** argv = NULL;
-    int fd[2]; 
-    for(;;){
+    //int fd[2]; 
+    while(!feof(stdin)){
         l:
         printf("%s%s > %s",GREEN,getcwd(buff,1024),YELLOW);
         ch = readword(stdin,&n);
@@ -138,12 +144,14 @@ int main(){
         if (!strcmp(ch,C1)) {
             return 0;
             free(ch);
-            exit;
+            exit (0);
         }
         
         if (!strcmp(ch,C2)) {
             free(ch);
-            ch = readword(stdin,&n);
+            if (n) ch = getenv("HOME");
+            else ch = readword(stdin,&n);
+            if (ch == NULL) ch = getenv("HOME");
             chdir(ch);
             goto l;
             free(ch);
@@ -162,7 +170,6 @@ int main(){
         free(ch);
 
 
-        //myfree(argv);
         /*
         if (pipe(fd)<0){
             perror("pipe");
@@ -177,7 +184,7 @@ int main(){
                 dup2(fd[1],1);
                 close(fd[1]);
                 close(fd[0]);
-                execvp(ch1,argv);
+                execvp(ch,argv);
                 //perror(ch1);
                 exit(2);
             default:
