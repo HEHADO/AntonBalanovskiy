@@ -19,8 +19,9 @@
 
 
 
-void exitwitheof(){
+void exitwitheof(char* v){
     printf("%sExit\n%s",BLUE,BLACK);
+    if (v !=NULL) free(v); 
     exit (0);
 }
 
@@ -31,10 +32,10 @@ char *readword (FILE *f,int* t){
     int quotesisopen = 0;
     char ch;
     char* word = NULL;
-    word = malloc(0*sizeof(char));
     while (isspace(ch = getc(f)) );
-    if (ch==EOF) exitwitheof();
+    if (ch == EOF) exitwitheof(word);
     while ((!isspace(ch))||(quotesisopen != 0)||(ch == '"')){
+        if (word == NULL) word = malloc (0*sizeof(char));
         if (size <= n){
             size = 2*size + 5;
             word = realloc(word,size);
@@ -49,7 +50,7 @@ char *readword (FILE *f,int* t){
             //printf("%d\n",n);
         }
         ch = getc(f);
-        if (ch==EOF) exitwitheof();
+        if (ch==EOF) exitwitheof(word);
         if (ch == '\n'){
             *t = 1;
             goto m;
@@ -83,7 +84,7 @@ int size (char* ch){
 char** createargv(int n,char* ch){
     int size=1;
     int i=0;
-    char** argv = malloc(1*sizeof(char*));
+    char** argv = malloc(2*sizeof(char*));
     //printf("%s\n",ch);
     //printf("%d\n",n);
     while (n == 0){
@@ -92,15 +93,15 @@ char** createargv(int n,char* ch){
             argv = realloc(argv,size);
         }
         //printf("%s\n",ch);
-        argv[i] = strdup(ch);//?????????????????????????????????????????
-        free(ch);
+        argv[i] = ch;//?????????????????????????????????????????
+        //free(ch);
         ch = readword(stdin, &n);
         i++;
         //printf("%d\n",i);
     }
-    argv[i] = strdup(ch);
+    argv[i] = ch;
     argv[i+1] = NULL;
-    free(ch);
+    //free(ch);
     return argv;
 }
 
@@ -125,7 +126,7 @@ void myfree(char** v){
         free (v[i]);
         i++;
     }
-    free (v);
+    free (v); 
 }
 
 
@@ -136,14 +137,12 @@ int main(){
     int n = 0;
     char** argv = NULL;
     //int fd[2]; 
-    while(!feof(stdin)){
-        l:
-        printf("%s%s > %s",GREEN,getcwd(buff,1024),YELLOW);
+    for(;;){    l:
+        printf("%s%s > %s",GREEN,getcwd(buff,PATH_MAX),YELLOW);
         ch = readword(stdin,&n);
-        printf("%s",BLACK);
+        //printf("%s",BLACK);
                                             //printf("%s\t%d\n",ch,n);
         if (!strcmp(ch,C1)) {
-            return 0;
             free(ch);
             exit (0);
         }
@@ -152,13 +151,11 @@ int main(){
             free(ch);
             if (n) ch = getenv("HOME");
             else ch = readword(stdin,&n);
-            if (ch == NULL) ch = getenv("HOME");
             chdir(ch);
+            if (!n) free(ch);
             goto l;
-            free(ch);
         }
         
-
         int i = 0;
         argv = createargv(n, ch);
         //printf("%s",argv[0]);
@@ -168,9 +165,8 @@ int main(){
         }
         runcommand(argv);
         myfree(argv);
-        free(ch);
 
-
+        //free(ch);
         /*
         if (pipe(fd)<0){
             perror("pipe");
@@ -199,5 +195,5 @@ int main(){
         }*/
     
     }
-    exitwitheof();
+    
 }
