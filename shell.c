@@ -88,9 +88,9 @@ char** createargv(int n,char* ch){
     //printf("%s\n",ch);
     //printf("%d\n",n);
     while (n == 0){
-        if (size <= i+5){
-            size = 2*size + 5;
-            argv = realloc(argv,size);
+        if (size <= i+2){
+            size = 2*size + 2;
+            argv = realloc(argv,(size+2)*sizeof(char*));
         }
         //printf("%s\n",ch);
         argv[i] = ch;//?????????????????????????????????????????
@@ -98,6 +98,10 @@ char** createargv(int n,char* ch){
         ch = readword(stdin, &n);
         i++;
         //printf("%d\n",i);
+    }
+    if (size <= i+2){
+        size = 2*size + 2;
+        argv = realloc(argv,(size+2)*sizeof(char*));
     }
     argv[i] = ch;
     argv[i+1] = NULL;
@@ -160,10 +164,10 @@ int main(){
         int i = 0;
         argv = createargv(n, ch);
         //printf("%s",argv[0]);
-        while (argv[i] != NULL){
+        /*while (argv[i] != NULL){
             printf("%s\n",argv[i]);
             i++;
-        }
+        }*/
         runcommand (argv);
         myfree(argv);
 
