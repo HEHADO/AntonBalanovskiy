@@ -28,9 +28,10 @@
 #define NO 0
 
 
+
 int is_spesial_word(char* word);/*return true is it is spesial*/
 
-void myfree(char** v);
+void myfree(char** v,int i);
 
 void runcommand(char** arg);
 
@@ -49,9 +50,9 @@ typedef struct tr
     char** argv;
 } runtree;
 
+int count(char**);
 
-//runtree* tree=NULL;
-
+void treedel(runtree* t);
 
 void exitwitheof(char* v){
     printf("%sExit\n%s",BLUE,BLACK);
@@ -116,69 +117,10 @@ runtree* buildtree(char** str){
     i++;
     }
     i++;
-     //cat < 1.txt | cat
-
     tree->key = *str;
     tree->argv = str;
     return tree;
 }
-
-/*
-int work_tree(runtree *t, int p)
-{
-    if(!t){
-        return 1;
-    }
-    int r = 0, l = 0;
-
-    if(!strcmp(t->key, ";")){
-        work_tree(t->l, p);
-        r = work_tree(t->r, p);
-        if(r == -1){
-            return -1;
-        }else{
-            return 1;
-        }
-    }
-    else if(!strcmp(t->key, "|"))
-    {
-        int fd[2];
-        //pipe(fd);w
-        pipe(fd);
-        if(t->l->inp != NULL){
-            close(t->l->out);
-            t->l->out = -1;
-        }
-        if(t->r->inp != NULL){
-            close(t->r->inp);
-            t->r->inp = -1;
-        }
-        if(!p){
-            t->l->out = fd[1];
-            t->r->inp = fd[0];
-            work_tree(t->l, 1);
-            work_tree(t->r, 0);
-        }else{
-            t->l->out = fd[1];
-            t->r->inp = fd[0];
-            t->r->out = t->out;
-            work_tree(t->l, 1);
-            work_tree(t->r, 0);
-        }
-        return 1;
-    }
-    else{
-        int e;
-        work(t->key, t->r, t->out, &e);
-        
-        if(e == 2){
-            return -1;
-        }
-    }
-    return 1;
-}
-*/
-
 
 
 void printtree (runtree *t){
@@ -197,7 +139,7 @@ void printtree (runtree *t){
 }
 
 
-void WTF(char** argv, int inp, int out){
+void execute(char** argv, int inp, int out){
     int status = 0;
     if (fork()){
         wait(&status);
@@ -232,20 +174,22 @@ void runprogram(runtree* t){
         }else{
             t->l->inp = t->inp;
             t->l->out = fd[1];
-            t->r->out = t->out;
+            //t->r->out = t->out;
             t->r->inp = fd[0];
         }
         runprogram(t->l);
         close(fd[1]);
         runprogram(t->r);
         close(fd[0]);
-        free(t);
+        //free(t);
     }else {
         if(t->inp == -1) t->inp = 0;
         if(t->out == -1) t->out = 1;
-        WTF(t->argv, t->inp, t->out);
+        execute(t->argv, t->inp, t->out);
+        if (t->inp != 0) close(t->inp);
+        if (t->out != 1) close(t->out);
         //myfree(t->argv);
-        free(t);
+        //free(t);
     }
 }
 
@@ -275,13 +219,14 @@ int main(){
             continue;
         }
         
-        int i = 0;
         argv = createargv(n, ch);
+        int i = count(argv);
         //printf("%s",argv[0]);
         tree = buildtree(argv);
         printtree(tree);
         runprogram (tree);
-        myfree(argv);
+        myfree(argv,i);
+        treedel(tree);
     }
 }
 
@@ -293,30 +238,33 @@ int is_spesial_word(char* word){
     return i;
 }
 
+void treedel(runtree* t){
+    if(t != NULL){
+        treedel(t->l);
+        treedel(t->r);
+        //if(is_spesial_word(t->key)) free(t->key);
+        free(t);
+        t = NULL;
+    }
+    return;
+}
 
-void myfree(char** v){
-    int i=0;
-    while (v[i] != NULL){
-        free (v[i]);
-        i++;
+
+void myfree(char** v,int i){
+    while (i >= 0){
+        if(v[i] != NULL) free (v[i]);
+        i--;
     }
     free (v); 
 }
 
-/*
-void runcommand(char** arg){
-    int status = 0;
-    if (fork()){
-        wait(&status);
-        if(status != 0) perror(arg[0]);
-    } else{
-        execvp(arg[0], arg);
-        //execv(getenv("PATH"),arg);
-        perror(arg[0]);
-        exit(2);
-    }
+
+int count(char** v){
+    int i=0;
+    while (v[i] != NULL) i++;
+    return i;
 }
-*/
+
 
 char* readword (FILE *f,int* t){
     int n = 0;
@@ -400,7 +348,6 @@ char** createargv(int n,char* ch){
     }
     argv[i] = ch;
     argv[i+1] = NULL;
-    //free(ch);
     return argv;
 } 
 
@@ -437,44 +384,7 @@ char** modded_createargv(int n,char* ch,char** save){
     //free(ch);
     return argv;
 }
-*/
-    /*
-    if(!strcmp(t->key->elem, "||")){
-        l = work_tree(t->left, p);
-        if(l == -1){
-            r = work_tree(t->right, p);
-        }if(r == -1){
-            return -1;
-        }
-        else{
-            return 1;
-        }
-    }
-    else if(!strcmp(t->key->elem, "&&"))
-    {
-        l = work_tree(t->left, p);
-        if(l != -1){
-            r = work_tree(t->right, p);
-        }else{
-            return -1;
-        }
-        
-        if(r == -1){
-            return -1;
-        }
-        else{
-            return 1;
-        }
-    }
-    else*/
-    /*if(!strcmp(t->key, "exit")){
-            delprint(deleted);
-            delete_list(deleted);
-            killer();
-            delete_tree(t);
-            printf("End of the program\n");
-            exit(0);
-        }*/
+
 
 /*
 void runcommand(char** arg){
