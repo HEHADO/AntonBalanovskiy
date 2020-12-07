@@ -238,11 +238,11 @@ void print_pid(){
 }
 
 void sighandler(){
-    char s[] = "killall";
     char* argv[2048];
-    argv[0]=(char*)&s;
+    argv[0]=(char*)&"killall";
+    argv[1]=(char*)&"-eIq";
     printf("\n");
-    argv[1]=NULL;
+    argv[2]=NULL;
     execute(argv,0,1);
 }
 
