@@ -259,8 +259,8 @@ int main(){
     for(;;){    l:
         n =0;
         amp_mode =  0;
-         
         signal(SIGINT,sighandler);
+        signal(SIGCHLD,print_pid);
         printf("%s%s > %s",GREEN,getcwd(buff,PATH_MAX),YELLOW);
         ch = readword(stdin,&n);
         printf("%s",BLACK);
