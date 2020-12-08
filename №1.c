@@ -11,11 +11,12 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <limits.h>
-
+//(pr1|| pr2) | (pr3 ; pr4)
 int execute(char* argv, int inp, int out){
     int status = 0;
     if (fork()){
         wait(&status);
+        printf("%d",status)
         return status;
     } else{
         if (inp !=0){
@@ -35,16 +36,25 @@ int execute(char* argv, int inp, int out){
 
 int main(int argc, char const *argv[])
 {
+    char* pr1 = argv[1];
+    char* pr2 = argv[2];
+    char* pr3 = argv[3];
+    char* pr4 = argv[3];
     int fd[2];
     pipe (fd);
     int fd1[2];
     pipe (fd);
-    if (execute(argv[1],0,fd[1])){
-        execute(argv[1],fd[0],fd1[1]);
-    }else{
+    if (execute(pr1,0,fd[1])){
+        execute(pr2,fd[0],fd1[1]);
         close(fd[0]);
+    }else{
+        close(fd1[0]);
+        close(fd1[1]);
+        fd1[0]=fd[0];
         fd1[1]=fd[1];
-        
     }
+    close(fd[1]);
+    close(fd1[1]);
+    execute("echo",fd1[0],1);
     return 0;
 }
