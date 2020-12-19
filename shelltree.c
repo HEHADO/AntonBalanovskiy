@@ -54,6 +54,7 @@ char* readword (FILE *f,int* t);
 char** createargv(int n,char* ch);
 int findsheet(char** a);
 int count(char** v);
+int status;
 void treedel(runtree* t);
 void exitwitheof(char* v){
     printf("%sExit\n%s",BLUE,BLACK);
@@ -120,6 +121,24 @@ runtree* buildtree(char** str){
             i+1;
             return tree;
         }
+        if (!strcmp(str[i],"||")){ 
+            tree->key = strdup(str[i]);
+            free(str[i]);
+            str[i] = NULL;
+            tree->l = buildtree(str);
+            tree->r = buildtree(str+i+1);
+            i+1;
+            return tree;
+        }
+        if (!strcmp(str[i],"&&")){ 
+            tree->key = strdup(str[i]);
+            free(str[i]);
+            str[i] = NULL;
+            tree->l = buildtree(str);
+            tree->r = buildtree(str+i+1);
+            i+1;
+            return tree;
+        }
         i++;
     }
     i = 0;
@@ -162,7 +181,6 @@ void printtree (runtree *t){
 
 
 void execute(char** argv, int inp, int out){
-    int status = 0;
     if (fork()){
         wait(&status);
         //if((status != 0)&&(status != 2)) perror(argv[0]);
@@ -214,7 +232,21 @@ void runprogram(runtree* t, int l){
             runprogram(t->r,l);
             close(fd[0]);
             //free(t);
-        }else {
+        }else if(!strcmp(t->key,"||")){
+            if((t->inp != -1)&&(t->l->inp == -1)&&(t->l != NULL)) t->l->inp = t->inp;
+            if((t->inp != -1)&&(t->r->inp == -1)&&(t->r != NULL)) t->r->inp = t->inp;
+            if((t->out != -1)&&(t->l->out == -1)) t->l->out = t->out;
+            if((t->out != -1)&&(t->r->out == -1)) t->r->out = t->out;
+            runprogram(t->l,0);
+            if(status)runprogram(t->r,0);
+        }else if(!strcmp(t->key,"&&")){
+            if((t->inp != -1)&&(t->l->inp == -1)&&(t->l != NULL)) t->l->inp = t->inp;
+            if((t->inp != -1)&&(t->r->inp == -1)&&(t->r != NULL)) t->r->inp = t->inp;
+            if((t->out != -1)&&(t->l->out == -1)) t->l->out = t->out;
+            if((t->out != -1)&&(t->r->out == -1)) t->r->out = t->out;
+            runprogram(t->l,0);
+            if(!status)runprogram(t->r,0);
+        } else {
             if(t->inp == -1) t->inp = 0;
             if(t->out == -1) t->out = 1;
             if(amp_mode&&l) paralel(t->argv, t->inp, t->out);
@@ -422,7 +454,7 @@ char* readword (FILE *f,int* t){
         if((ch = getchar())== '\n') *t=1;
         else ungetc(ch,stdin);
     }
-    if ((n-1 >= 0)&&(word[n-1] == '>')&&(!t)){
+    if ((n-1 >= 0)&&(word[n-1] == '>')&&(t)){
         ch = getc(f);
         if (ch == '>'){
             word[n]=ch;
@@ -430,7 +462,7 @@ char* readword (FILE *f,int* t){
         }
         else ungetc(ch,f);
     }
-        if ((n-1 >= 0)&&(word[n-1] == '&')&&(!t)){
+        if ((n-1 >= 0)&&(word[n-1] == '&')&&(t)){
         ch = getc(f);
         if (ch == '&'){
             word[n]=ch;
@@ -438,7 +470,7 @@ char* readword (FILE *f,int* t){
         }
         else ungetc(ch,f);
     }
-        if ((n-1 >= 0)&&(word[n-1] == '|')&&(!t)){
+        if ((n-1 >= 0)&&(word[n-1] == '|')&&(t)){
         ch = getc(f);
         if (ch == '|'){
             word[n]=ch;
