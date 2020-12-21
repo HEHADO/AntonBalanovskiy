@@ -66,7 +66,7 @@ void exitwitheof(char* v){
 runtree* buildtree(char** str){
     runtree* tree = NULL;
     int i = 0;
-        int temp;
+        //int temp;
     if (tree == NULL) {
         tree = (runtree*) malloc(sizeof(runtree));
         tree->inp = -1;
@@ -75,33 +75,46 @@ runtree* buildtree(char** str){
         tree->append_mode = 0;
         tree->argv = NULL;
         tree->l = tree->r = NULL;
-        //char* kword = NULL;
-        //char** key = NULL;
     }
     while (str[i] != NULL){
         if (!strcmp(str[i],"(")){
+            int count=1;
+            int n=i;
             free(str[i]);
             str[i] = NULL;
             i++;
-            while (strcmp(str[i],")")) i++;
+            while((str[i] !=NULL)){
+                if(!strcmp(str[i],"(")) count++;
+                else if(!strcmp(str[i],")"))count--;
+                i++;
+                if (!count) break;
+            }
+            if (count!=0) printf("%sTrY AgAiN%s\n",RED,CYAN);
             free(str[i]);
             str[i] = NULL;
-            i++;
-            if (str[i] != NULL) tree->key = strdup(str[i]);
-            else(tree->key=NULL);
-            free(str[i]);
-            str[i] = NULL;
-            if(tree->key == NULL) return buildtree(str+1);
-            tree->l = buildtree(str+1);
-            tree->r = buildtree(str+i+1);
-            return tree;
+            if(n){
+                tree->key = strdup(str[n-1]);
+                free(str[n-1]);
+                str[n-1] = NULL;                    
+                tree->l = buildtree(str);
+                tree->r = buildtree(str+n+1);
+            }else{
+                if (str[i] != NULL) tree->key = strdup(str[i]);
+                else(tree->key=NULL);
+                free(str[i]);
+                str[i] = NULL;
+                if(tree->key == NULL) return buildtree(str+1);
+                tree->l = buildtree(str+1);
+                tree->r = buildtree(str+i+1);
+                return tree;
+            }
         }
         i++;
     }
     i = 0;
     while (str[i] != NULL){
         if (!strcmp(str[i],";")){ 
-            tree->key = ";";
+            tree->key = strdup(str[i]);
             free(str[i]);
             str[i] = NULL;
             tree->l = buildtree(str);
@@ -113,12 +126,11 @@ runtree* buildtree(char** str){
     i = 0;
     while (str[i] != NULL){
         if (!strcmp(str[i],"|")){ 
-            tree->key = "|";
+            tree->key = strdup(str[i]);
             free(str[i]);
             str[i] = NULL;
             tree->l = buildtree(str);
             tree->r = buildtree(str+i+1);
-            i+1;
             return tree;
         }
         if (!strcmp(str[i],"||")){ 
@@ -127,7 +139,6 @@ runtree* buildtree(char** str){
             str[i] = NULL;
             tree->l = buildtree(str);
             tree->r = buildtree(str+i+1);
-            i+1;
             return tree;
         }
         if (!strcmp(str[i],"&&")){ 
@@ -136,7 +147,6 @@ runtree* buildtree(char** str){
             str[i] = NULL;
             tree->l = buildtree(str);
             tree->r = buildtree(str+i+1);
-            i+1;
             return tree;
         }
         i++;
@@ -145,7 +155,7 @@ runtree* buildtree(char** str){
     while (str[i] != NULL){
         if (is_spesial_word(str[i])){
             //FILE*f;
-            if(!strcmp(str[i],">")) tree->out = tree->out = open(str[i+1],O_WRONLY | O_CREAT | O_TRUNC, 0777);
+            if(!strcmp(str[i],">")) tree->out = open(str[i+1],O_WRONLY | O_CREAT | O_TRUNC, 0777);
             if(!strcmp(str[i],"<")) tree->inp = open(str[i+1],O_RDONLY | O_CREAT , 0777);
             if(!strcmp(str[i],">>"))tree->out = open(str[i+1],O_WRONLY | O_CREAT| O_APPEND , 0777);
             while (str[i] != NULL){
@@ -183,7 +193,6 @@ void printtree (runtree *t){
 void execute(char** argv, int inp, int out){
     if (fork()){
         wait(&status);
-        //if((status != 0)&&(status != 2)) perror(argv[0]);
     } else{
         if (inp !=0){
             dup2(inp,0);
@@ -194,12 +203,10 @@ void execute(char** argv, int inp, int out){
             close(out);
         }
         execvp(argv[0], argv);
-        //execv(getenv("PATH"),arg);
         perror(argv[0]);
         exit(2);
     }
 }
-
 
 void runprogram(runtree* t, int l){
         if(t->key != NULL){
@@ -231,7 +238,6 @@ void runprogram(runtree* t, int l){
             close(fd[1]);
             runprogram(t->r,l);
             close(fd[0]);
-            //free(t);
         }else if(!strcmp(t->key,"||")){
             if((t->inp != -1)&&(t->l->inp == -1)&&(t->l != NULL)) t->l->inp = t->inp;
             if((t->inp != -1)&&(t->r->inp == -1)&&(t->r != NULL)) t->r->inp = t->inp;
@@ -300,10 +306,7 @@ int main(){
     runtree* tree;
     char** argv = NULL;
     for (int i = 0; i < BUFF; i++) proceses[i]=0;
-    //int fd[2]; 
-    char tests[] = "";
-    char** tst = malloc(1024);
-    for(;;){    l:
+    for(;;){    //l:
         n =0;
         amp_mode =  0;
         signal(SIGINT,sighandler);
@@ -314,6 +317,7 @@ int main(){
                                             //printf("%s\t%d\n",ch,n);
         if (!strcmp(ch,C1)) {
             free(ch);
+            serialkiller();
             exit (0);
         }
             
@@ -379,7 +383,7 @@ void treedel(runtree* t){
     if(t != NULL){
         treedel(t->l);
         treedel(t->r);
-        //if(is_spesial_word(t->key)) free(t->key);
+        if(is_spesial_word(t->key)) free(t->key);
         //if (t->inp != 0) close(t->inp);
         //if (t->out != 1) close(t->out);
         free(t);
@@ -415,21 +419,18 @@ char* readword (FILE *f,int* t){
     while (isspace(ch = getc(f)));
     if (ch == EOF) exitwitheof(word);
     while (((!isspace(ch))||(quotesisopen != 0)||(ch == '"'))&&(!*t)){
-        if (word == NULL) word = malloc (0*sizeof(char));
-        
+        if (word == NULL) word = malloc (0*sizeof(char));   
         if (size <= n){
             size = 2*size + 5;
             word = realloc(word,size*sizeof(char));
         }
         if (ch == '"'){
-            //printf("Kavichki\n");
             if (quotesisopen == 0) quotesisopen = 1; 
             else if (quotesisopen == 1) quotesisopen = 0;
         }else{
             if(SPEC(ch)&&(!quotesisopen)) break;
             word[n] = ch;
             n++;
-            //printf("%d\n",n);
         }
         ch = getc(f);
         if (ch==EOF) exitwitheof(word);
@@ -486,19 +487,14 @@ char** createargv(int n,char* ch){
     int size=2;
     int i=0;
     char** argv = malloc(2*sizeof(char*));
-    //printf("%s\n",ch);
-    //printf("%d\n",n);
     while (n == 0){
         if (size <= i+2){
             size = 2*size + 2;
             argv = realloc(argv,(size+2)*sizeof(char*));
         }
-        //printf("%s\n",ch);
-        argv[i] = ch;//?????????????????????????????????????????
-        //free(ch);
+        argv[i] = ch;
         ch = readword(stdin, &n);
         i++;
-        //printf("%d\n",i);
     }
     if (size <= i+2){
         size = 2*size + 2;
@@ -514,5 +510,4 @@ void serialkiller(){
     {
         if(proceses[i] != 0) kill(proceses[i],2);
     }
-    
 }
