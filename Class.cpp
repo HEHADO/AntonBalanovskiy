@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cassert>
 #define Left true
 #define Right false
 #include <string>
@@ -12,85 +13,80 @@ using namespace std;
 
 
 class carriage {
-friend class stack;
-public:
+    friend class stack;
+    public:
     int ID=0;
     char direction='0';
  };
 
 class stack {
-    //friend carriage :: pop(stack*);
-    friend class cariage;
-    //int count=0;
-    
-
-
-public:
-    carriage current;
-    stack* next=NULL;
-    stack* push (const carriage v){
-        stack* s = new stack;
-        //new int ;
-        s->current = v;
-        s->next = this;
-        return s;
+    struct node{
+        node* next {nullptr};
+        carriage wagon;
     };
+    node* top {nullptr};
+    friend class cariage;
+    public:
+    void push (const carriage v);
+    carriage pop ();
+    bool is_somthing ();
 };
 
-
-
-
-carriage pop (stack*& s) {
-    stack* t = s->next;
-    carriage wagon {s->current};
-    delete s;
-    s = t;
-    return wagon;
+void stack::push(const carriage v) {
+    top = new node {top,v};
 };
 
+carriage stack::pop () {
+    assert(top && "stack is empty");
+    auto temp {top};
+    auto temp2 {top->wagon};
+    top = top->next;
+    delete temp;
+    return temp2;
+};
 
+bool stack::is_somthing (){
+    return top;
+};
+
+istream& operator >> (istream& inp, carriage& wagon ) {
+    inp >> wagon.ID;
+    inp >> wagon.direction;
+    return inp;
+};
 
 
 int main(int argc, char const *argv[]){
     cout << "enter the number of wagons" <<endl;
     int i;
-    char ch;
-    int id;
     cin >> i;
     carriage wagon;
-    stack* left; 
-    stack*right;
-    fstream input;
+    stack left; 
+    stack right;
+    fstream fs;
     bool b = false;
     if (argc > 1) {
-        
-        input.open(argv[1], ios::in);
+        fs.open(argv[1], ios::in);
         b = true;
     }
-    for (i; i != 0; i--) {
-        if (!b) {
-            cin >> id;
-            cin >> ch;
-        } else {
-            input >> id;
-            input >> ch;
-        }
-        wagon.direction = ch;
-        wagon.ID = id;
-        if (ch=='l') left = (*left).push(wagon);
-        else right = (*right).push(wagon);//мутная история
+
+    std::istream& input = (argc>1)?fs:cin;
+
+    for (; i != 0; i--) {
+        input >> wagon;
+        if (wagon.direction == 'l') left.push(wagon);
+        else right.push(wagon);
     }
     cout << "on left side" <<endl;
     #pragma omp parallel while default(shared)
-    while ((left != 0)&&(left->current.direction !='0')) {
-        wagon = pop(left);
-        cout << wagon.ID;
-        cout << "\n";
+    while (left.is_somthing()) {
+        wagon = left.pop();
+        cout << wagon.ID << "\n";
     }
     cout << "on right side" << endl;
-    while ((right != NULL)&&(right->current.direction !='0')) {
-        wagon = pop(right);
-        cout << wagon.ID;
-        cout << "\n";
+    while (right.is_somthing()) {
+        wagon = right.pop();
+        cout << wagon.ID << "\n";
     }
+    //cin.eof()    
 }
