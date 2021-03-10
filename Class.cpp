@@ -38,6 +38,7 @@ void stack::push(const carriage v) {
 
 carriage stack::pop () {
     assert(top && "stack is empty");
+    //auto t
     auto temp {top};
     auto temp2 {top->wagon};
     top = top->next;
