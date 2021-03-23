@@ -50,6 +50,7 @@ istream& operator >> (istream& inp, Month& month){
         month = December;
         break;
     }
+    return inp;
 };
 
 class abstract {
@@ -86,11 +87,13 @@ class Date : public Time {
     Time*T {nullptr};
 public:
     Date (const int YEAR, const Month month, const Time t, const int day);
-    Date operator = (Date date){
+    Date operator = (Date date) {
         this->Day = date.Day;
         this->m = date.m;
         this->year = date.year;
+        delete this->T;
         this->T = new auto {*(date.T)};
+        return *this;
     };
     ~Date ();
 };
