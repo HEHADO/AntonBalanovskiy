@@ -48,7 +48,7 @@ istream& operator >> (istream& inp, Month& month){
         month = November;
     case 12:
         month = December;
-        break;
+        //break;
     }
     return inp;
 };
@@ -73,7 +73,7 @@ public:
     Time (const int a,const int b,const int c);  
 };
 
-class Date : public Time {
+class Date : abstract{
     void reset(){
         this->Day=0;
         this->year=0;
