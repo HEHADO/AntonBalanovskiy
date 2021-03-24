@@ -54,30 +54,47 @@ istream& operator >> (istream& inp, Month& month){
 };
 
 class abstract {
-
+    protected:
+    const char** yes;
+    const char** no;
+    int* i;
     public:
-    virtual void reset()=0;
+    abstract (){
+        //высасываем из пальца неплоскость
+        yes = new auto {"of course it is 😎\n"};
+        no = new auto {"try a bit later  🙃\n"};
+        i = new auto {1488};
+    }
+    ~abstract(){
+        delete yes;
+        delete no;
+        delete i;
+    }
+    abstract (const abstract& a){
+        yes = new auto {*a.yes};
+        no =  new auto {*a.no};
+        i = new auto {*a.i};
+    }
+    virtual const char* is_it_cool_time () = 0;
 };
 
 
-class Time : abstract {
+class Time : public abstract {
     friend ostream& operator << (ostream& inp, Time& time );
     friend istream& operator >> (istream& inp, Time& time );
     int h,m,s;
 public:
-    void reset(){
-        this->h=0;
-        this->m=0;
-        this->s=0;
+    const char* is_it_cool_time(){
+        if ((h == m)&&(m == s)) return *yes;
+        return *no;
     }
     Time (const int a,const int b,const int c);  
 };
 
 class Date : abstract{
-    void reset(){
-        this->Day=0;
-        this->year=0;
-        this->m=January;
+    const char* is_it_cool_time(){
+        if (((year%100) == Day)&&(Day == m)) return *yes;
+        return *no;
     }
     friend istream& operator >> (istream& inp, Date& date);
     friend ostream& operator << (ostream& inp, Date& date);
