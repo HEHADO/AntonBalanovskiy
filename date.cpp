@@ -57,6 +57,7 @@ class abstract {
     protected:
     const char** yes;
     const char** no;
+    private:
     int* i;
     public:
     abstract (){
