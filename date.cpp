@@ -61,7 +61,6 @@ class abstract {
     int* i;
     public:
     abstract (){
-        //высасываем из пальца неплоскость
         yes = new char* {"of course it is 😎\n"};
         no = new char* {"try a bit later  🙃\n"};
         i = new int {1488};
