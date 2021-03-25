@@ -62,11 +62,11 @@ class abstract {
     public:
     abstract (){
         //высасываем из пальца неплоскость
-        yes = new auto {"of course it is 😎\n"};
-        no = new auto {"try a bit later  🙃\n"};
-        i = new auto {1488};
+        yes = new char* {"of course it is 😎\n"};
+        no = new char* {"try a bit later  🙃\n"};
+        i = new int {1488};
     }
-    ~abstract(){
+    virtual ~abstract(){
         delete yes;
         delete no;
         delete i;
@@ -104,15 +104,21 @@ class Date : abstract{
     int Day;
     Time*T {nullptr};
 public:
-    Date (const int YEAR, const Month month, const Time t, const int day);
-    Date operator = (Date date) {
-        this->Day = date.Day;
-        this->m = date.m;
-        this->year = date.year;
-        delete this->T;
-        this->T = new auto {*(date.T)};
+    Date (const int YEAR, const Month month, const Time& t, const int day);
+    Date& operator = (Date& date) {
+        Day = date.Day;
+        m = date.m;
+        year = date.year;
+        delete T;
+        T = new auto {*(date.T)};
         return *this;
     };
+    Date  (const Date& d){
+        m = d.m;
+        year = d.year;
+        T = new Time {*d.T};
+        Day = d.Day;
+    }
     ~Date ();
 };
 
@@ -122,10 +128,10 @@ Time::Time (const int a=0,const int b=0,const int c=0){
     s=c;
 }
 
-Date::Date(const int YEAR, const Month month, const Time t, const int day) {
-    this->year = YEAR;
-    this->m = month;
-    this->T = new auto {t};
+Date::Date(const int YEAR, const Month month, const Time& t, const int day) {
+    year = YEAR;
+    m = month;
+    T = new auto {t};
 }
 /*
 Date:: Date operator = (Date date) {
@@ -133,7 +139,7 @@ Date:: Date operator = (Date date) {
 }*/
 
 Date::~Date(){
-    delete this->T;
+    delete T;
 }
 
 ostream& operator << (ostream& inp, Time& time ) {
