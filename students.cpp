@@ -9,8 +9,8 @@ using std::string;
 class Student {
 
 protected:
-    string students[ALL_PLACES]{nullptr};
-    string facultets[ALL_PLACES]{nullptr}; 
+    string students[ALL_PLACES]{nullptr};//имя фамилия студента
+    string facultets[ALL_PLACES]{nullptr};// факультет                                                      
 public:
     virtual int count() = 0;
     Student (){
@@ -70,9 +70,5 @@ std::ostream& operator << (std::ostream &os, CMS &o) {
     for (int i=0;i < ALL_PLACES;i++){
         if (o.facultets[i] == "CMS") std::cout << o.students[i]<< std::endl;
     }
-}
-
-int main(int argc, char const *argv[]){
-    return 0;
 }
 
