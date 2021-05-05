@@ -141,9 +141,13 @@ vector<string> string_to_V(string s) {
 
 void Handler(ConnectedSocket cs, string path) {
     int fd;
-    if (path == "/") {fd = open("index.html", O_RDONLY);}
-    else { fd = open(("."+path).c_str(), O_RDONLY);}
+    if (path == "/") {
+        fd = open("index.html", O_RDONLY);
+    } else { 
+        fd = open(("."+path).c_str(), O_RDONLY);
+    }
     if (fd < 0) {
+        //perror("index");
         cout << "\nclient: HTTP/1.1 404 Not Found";
         cs << "HTTP/1.1 404 Not Found\0";
         fd = open("404.html", O_RDONLY);
@@ -239,7 +243,7 @@ void Handler2(string path_name, ConnectedSocket s,string fr){
         exit(1) ;
     } else if (pid > 0) {
         wait(&status);
-        //if (status > 0){
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0){
             fd = open("temp.txt", O_RDONLY);
             cout << "HTTP/1.1 200 OK\n";
             s <<  "HTTP/1.1 200 OK";
@@ -252,8 +256,8 @@ void Handler2(string path_name, ConnectedSocket s,string fr){
             s << vect;
             close (fd);
             s.Shutdown();
-        //}
-    }exit(1);
+        }
+    }
 }
 
 
@@ -269,7 +273,7 @@ void ProcessConnection(int cd, const SocketAddr& clAddr) {
     if (s[i] == ' ') i++; 
     while (s[i] != ' ') path += s[i++];
     cout << path;
-    if (!find_Walley){
+    if (!find_Walley(path)){
         Handler(cs, path);
     } else {
         Handler2(path, cs, request);
