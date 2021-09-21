@@ -13,11 +13,11 @@
 ----
 
 - 3 semester
-     - [shell][sh]
+     - [***Shell***][sh]
      - [transcoder][p2]
      - [frequency tree][p1]
 - 4 semester
-     - [model web server][serv]
+     - [***model web server***][serv]
      - [leap years][p4]
      - [class system][p3]
 
