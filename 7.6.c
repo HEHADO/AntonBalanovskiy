@@ -52,6 +52,7 @@ char* cmp(FILE *f1, FILE *f2) {
             n++;
         }
     }
+    
     if ((t1 == EOF) && (t2 != EOF)) {
         return s1; 
     }
