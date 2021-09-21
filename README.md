@@ -8,6 +8,8 @@
 
 ![GitHub language count](https://img.shields.io/github/languages/count/HEHADO/AntonBalanovskiy?color=purple&logo=github&logoColor=black)
 ![GitHub top language](https://img.shields.io/github/languages/top/HEHADO/AntonBalanovskiy?color=purple)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/HEHADO/AntonBalanovskiy?color=purple&logo=github&logoColor=black)
+![GitHub repo file count](https://img.shields.io/github/directory-file-count/HEHADO/AntonBalanovskiy?color=purple&logo=github)
 
    `Этот репозиторий содержит задания по практикуму за 3 и 4 семестр`
 
@@ -18,7 +20,7 @@
     - [частотное дерево][p1]
 - 4 семестр
     - [модельный веб сервер][serv]
-    - [][]
+    //- [][]
     - [система классов][p3]
 
 [eng]: README.en.md
