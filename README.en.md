@@ -14,12 +14,12 @@
 
 - 3 semester
      - [***Shell***][sh]
-     - [transcoder][p2]
-     - [frequency tree][p1]
+     - [Transcoder][p2]
+     - [Frequency tree][p1]
 - 4 semester
-     - [***model web server***][serv]
-     - [leap years][p4]
-     - [class system][p3]
+     - [***Model web server***][serv]
+     - [Leap years][p4]
+     - [Class system][p3]
 
 [ru]: README.md
 [sh]: https://github.com/HEHADO/AntonBalanovskiy/blob/shell.4/shelltree.c
