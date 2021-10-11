@@ -126,8 +126,3 @@ int main (int argc,char* argv[]){
 }
 
 
-
-
-
-FFFE : LE
-FEFF : BE
