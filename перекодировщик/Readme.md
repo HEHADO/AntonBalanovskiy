@@ -1,3 +1,3 @@
 # Задача
 
-![Image alt](other/task.jpj)
+![Image alt](other/task.jpg)
