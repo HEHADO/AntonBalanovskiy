@@ -114,7 +114,7 @@ int main (int argc,char* argv[]){
         else if ((u16 != 0xFFFE)&&(u16 != 0xFEFF)){
             fprintf(stderr,"There is no BOM\n");
             /*ch = u16;
-            ungetc(ch);   
+            ungetc(ch);
             ch = u16>>8;
             ungetc(ch);*/
             LITTLEEND(f1,f2,u16);
@@ -124,3 +124,10 @@ int main (int argc,char* argv[]){
     fclose(f1);
     fclose(f2);
 }
+
+
+
+
+
+FFFE : LE
+FEFF : BE

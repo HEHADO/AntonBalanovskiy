@@ -51,7 +51,7 @@ void mult_matrix_by_number(double *** m, int rows, int columns, double value) {
     }
 }
 
-double ** matrix_mult(double ** m1, int rows1, int columns1, double ** m2, int rows2, int columns2) {
+double ** matrix_mult(double *** m1, int rows1, int columns1, double *** m2, int rows2, int columns2) {
     if (columns1 != rows2) {
         return NULL;
     }
@@ -60,7 +60,7 @@ double ** matrix_mult(double ** m1, int rows1, int columns1, double ** m2, int r
 
     for (int i = 0; i < rows1; ++i) {
         for (int j = 0; j < columns1; ++j) {
-            new_matrix[i][j] = m1[i][j] * m2[j][i];
+            new_matrix[i][j] = (*m1)[i][j] * (*m2)[j][i];
         }
     }
 
@@ -89,10 +89,11 @@ double matrix_determinant(double *** m, int rows, int columns) {
 
 void input_matrix(double *** m, int rows, int columns) {
     for (int i = 0; i < rows; ++i) {
-        printf("Enter numbers of the %f row:\n", i+1);
+        printf("Enter numbers of the %d row:\n", i+1);
         for (int j = 0; j < columns; ++j) {
             double tmp_val;
-            scanf(&tmp_val,(*m)[i][j]);
+            scanf("%le",&tmp_val);
+//            (*m)[i][j]=tmp_val;
         }
     }
 }
@@ -108,8 +109,12 @@ void print_matrix(double *** m, int rows, int columns) {
 
 int main() {
     double **B;
-    create_matrix(&B, 5, 5);
-    delete_matrix(&B, 5, 5);
+    double **A;
+    input_matrix(&A, 3, 3);
+    input_matrix(&B, 3, 3);
+    double **C = matrix_mult(&A, 3, 3,&B, 3, 3);
+    print_matrix(&C, 3, 3);
+    delete_matrix(&B, 3, 3);
     
     return 0;
 }
