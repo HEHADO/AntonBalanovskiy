@@ -36,9 +36,9 @@ $$yN =\frac {µ_2 + χ_2β_N }{1 − χ_2α_N}$$
 Далее, зная y<sub>N</sub>, находим все значения y<sub>_i_</sub>, _i_ = 0, N
 ## Реализация
 
-[Реализация на языке Dart](progonka\lib\progonka.dart)
+[Реализация на языке Dart](lib\progonka.dart)
 ## Тесты
-[Тесты на языке Dart](progonka\test\progonka_test.dart)
+[Тесты на языке Dart](test\progonka_test.dart)
 
 Для запуска тестов необходимо установить Dart, после выполнить команду
 
